@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VogueAura | Fashion Brand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="navbar" aria-label="Primary navigation">
+    <div class="container nav-container">
+      <a class="logo" href="index.html" aria-label="VogueAura home">VogueAura</a>
+      <ul class="nav-links">
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#about">Atelier</a></li>
+        <li><a href="#gallery">Lookbook</a></li>
+        <li><a href="admin.html">Orders</a></li>
+      </ul>
+      <a class="bag-link" href="cart.html" aria-label="View cart">
+        <span>Bag</span>
+        <strong id="cart-count">0</strong>
+      </a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-shade"></div>
+    <div class="container hero-content">
+      <p class="hero-line">VogueAura</p>
+      <h1>Tailored drama for women who own the room.</h1>
+      <p>Polished occasionwear, sculptural layers, and street-ready staples curated for modern Nigerian wardrobes.</p>
+      <div class="hero-actions">
+        <a href="#shop" class="btn btn-light">Shop Collection</a>
+        <a href="#gallery" class="text-link">View Lookbook</a>
+      </div>
+    </div>
+    <div class="hero-note" aria-label="Brand promise">
+      <span>New season edit</span>
+      <span>Limited studio drops</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="shop" class="shop section-band">
+      <div class="container">
+        <div class="section-heading">
+          <p>Collection</p>
+          <h2>Statement pieces with everyday precision.</h2>
+          <span>Six polished staples, styled for dinners, launches, workdays, and warm city nights.</span>
+        </div>
+
+        <div class="product-grid">
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=900&q=80" alt="Elegant red satin dress on a model">
+            <div class="product-info">
+              <div>
+                <h3>Elegant Red Dress</h3>
+                <p>Fluid satin column dress</p>
+              </div>
+              <p class="price">NGN 35,000</p>
+            </div>
+            <button class="add-to-cart" data-name="Elegant Red Dress" data-price="35000">Add to Bag</button>
+          </article>
+
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=900&q=80" alt="Clean white sneakers on a studio backdrop">
+            <div class="product-info">
+              <div>
+                <h3>Tan Sneakers</h3>
+                <p>Suede city low-tops</p>
+              </div>
+              <p class="price">NGN 28,000</p>
+            </div>
+            <button class="add-to-cart" data-name="Tan Sneakers" data-price="28000">Add to Bag</button>
+          </article>
+
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80" alt="Black leather jacket styled on a hanger">
+            <div class="product-info">
+              <div>
+                <h3>Leather Jacket</h3>
+                <p>Sharp cropped moto layer</p>
+              </div>
+              <p class="price">NGN 45,000</p>
+            </div>
+            <button class="add-to-cart" data-name="Leather Jacket" data-price="45000">Add to Bag</button>
+          </article>
+
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=80" alt="Black heels with an elegant pointed toe">
+            <div class="product-info">
+              <div>
+                <h3>Floral Heels</h3>
+                <p>Printed pointed pumps</p>
+              </div>
+              <p class="price">NGN 30,000</p>
+            </div>
+            <button class="add-to-cart" data-name="Floral Heels" data-price="30000">Add to Bag</button>
+          </article>
+
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=80" alt="Light summer dress in soft daylight">
+            <div class="product-info">
+              <div>
+                <h3>Summer Dress</h3>
+                <p>Breathable warm-weather midi</p>
+              </div>
+              <p class="price">NGN 32,000</p>
+            </div>
+            <button class="add-to-cart" data-name="Summer Dress" data-price="32000">Add to Bag</button>
+          </article>
+
+          <article class="product-card">
+            <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=900&q=80" alt="Running shoes photographed in a clean studio setting">
+            <div class="product-info">
+              <div>
+                <h3>White Trainers</h3>
+                <p>Street-ready running pair</p>
+              </div>
+              <p class="price">NGN 27,000</p>
+            </div>
+            <button class="add-to-cart" data-name="White Trainers" data-price="27000">Add to Bag</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="brand-about">
+      <div class="container about-layout">
+        <div>
+          <p class="section-kicker">Atelier Notes</p>
+          <h2>Quiet tailoring, confident silhouettes, and finishes that photograph beautifully.</h2>
+        </div>
+        <div class="about-copy">
+          <p>VogueAura designs for women who want polish without losing ease. Every piece is selected for fabric feel, movement, and a silhouette that works from afternoon meetings to evening reservations.</p>
+          <dl class="proof-grid">
+            <div>
+              <dt>24h</dt>
+              <dd>Lagos dispatch window</dd>
+            </div>
+            <div>
+              <dt>6</dt>
+              <dd>Curated new-season pieces</dd>
+            </div>
+            <div>
+              <dt>100%</dt>
+              <dd>Quality checked before delivery</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="instagram section-band">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p>Lookbook</p>
+            <h2>Styled for motion, daylight, and late reservations.</h2>
+          </div>
+          <a href="#shop" class="btn btn-dark">Build Your Look</a>
+        </div>
+
+        <div class="instagram-grid">
+          <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80" alt="Editorial fashion look in neutral tones">
+          <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=700&q=80" alt="Fashion model in a structured coat">
+          <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=80" alt="Woman wearing a polished black outfit">
+          <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=700&q=80" alt="Street style editorial portrait">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-layout">
+      <p>VogueAura</p>
+      <span>Fashion brand demo built for a premium boutique experience.</span>
+      <a href="checkout.html">Checkout</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const buttons = document.querySelectorAll(".add-to-cart");
+    const cartCount = document.getElementById("cart-count");
+    const toast = document.getElementById("toast");
+
+    const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
+    const saveCart = (cart) => {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    };
+
+    let toastTimer;
+    const showToast = (message) => {
+      toast.textContent = message;
+      toast.classList.add("is-visible");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2200);
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const name = button.dataset.name;
+        const price = Number(button.dataset.price);
+        const cart = getCart();
+        const existing = cart.find((item) => item.name === name);
+
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ name, price, quantity: 1 });
+        }
+
+        saveCart(cart);
+        showToast(name + " added to your bag");
+      });
+    });
+
+    saveCart(getCart());
+  </script>
+</body>
+</html>

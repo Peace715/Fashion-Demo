@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Bag | VogueAura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-shell">
+  <nav class="navbar" aria-label="Primary navigation">
+    <div class="container nav-container">
+      <a class="logo" href="index.html">VogueAura</a>
+      <ul class="nav-links">
+        <li><a href="index.html#shop">Shop</a></li>
+        <li><a href="index.html#about">Atelier</a></li>
+        <li><a href="index.html#gallery">Lookbook</a></li>
+      </ul>
+      <a class="bag-link" href="cart.html" aria-label="View cart">
+        <span>Bag</span>
+        <strong id="cart-count">0</strong>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="section-kicker">Your Bag</p>
+        <h1>Review the pieces before they leave the studio.</h1>
+        <p>Adjust quantities, remove anything that no longer fits the mood, then continue to checkout.</p>
+      </div>
+    </section>
+
+    <section class="container cart-layout">
+      <div class="panel cart-items" id="cart-items"></div>
+      <aside class="panel summary" aria-label="Order summary">
+        <h2>Order Summary</h2>
+        <div class="summary-line">
+          <span>Items</span>
+          <strong id="item-total">0</strong>
+        </div>
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <strong id="cart-total">NGN 0</strong>
+        </div>
+        <a href="checkout.html" class="btn btn-dark">Checkout</a>
+        <a href="index.html#shop" class="text-link text-link-dark">Continue Shopping</a>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const productImages = {
+      "Elegant Red Dress": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80",
+      "Tan Sneakers": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80",
+      "Leather Jacket": "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80",
+      "Floral Heels": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=400&q=80",
+      "Summer Dress": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=400&q=80",
+      "White Trainers": "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=400&q=80"
+    };
+
+    const cartItems = document.getElementById("cart-items");
+    const cartCount = document.getElementById("cart-count");
+    const itemTotal = document.getElementById("item-total");
+    const cartTotal = document.getElementById("cart-total");
+    const formatMoney = (value) => "NGN " + Number(value).toLocaleString("en-NG");
+    const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
+    const setCart = (cart) => localStorage.setItem("cart", JSON.stringify(cart));
+
+    function renderCart() {
+      const cart = getCart();
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+      cartCount.textContent = count;
+      itemTotal.textContent = count;
+      cartTotal.textContent = formatMoney(total);
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<div class="empty-state">Your bag is empty. The collection is waiting.</div>';
+        return;
+      }
+
+      cartItems.innerHTML = cart.map((item, index) => `
+        <article class="cart-row">
+          <img src="${productImages[item.name]}" alt="${item.name}">
+          <div>
+            <h3>${item.name}</h3>
+            <p>${formatMoney(item.price)}</p>
+            <button class="remove-btn" data-index="${index}">Remove</button>
+          </div>
+          <div class="quantity-control" aria-label="Quantity for ${item.name}">
+            <button data-index="${index}" data-action="decrease" aria-label="Decrease quantity">-</button>
+            <span>${item.quantity}</span>
+            <button data-index="${index}" data-action="increase" aria-label="Increase quantity">+</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    cartItems.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      const cart = getCart();
+      const index = Number(button.dataset.index);
+
+      if (button.classList.contains("remove-btn")) {
+        cart.splice(index, 1);
+      } else if (button.dataset.action === "increase") {
+        cart[index].quantity += 1;
+      } else if (button.dataset.action === "decrease") {
+        cart[index].quantity -= 1;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+      }
+
+      setCart(cart);
+      renderCart();
+    });
+
+    renderCart();
+  </script>
+</body>
+</html>

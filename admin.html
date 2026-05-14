@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders | VogueAura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-shell">
+  <nav class="navbar" aria-label="Primary navigation">
+    <div class="container nav-container">
+      <a class="logo" href="index.html">VogueAura</a>
+      <ul class="nav-links">
+        <li><a href="index.html#shop">Shop</a></li>
+        <li><a href="index.html#about">Atelier</a></li>
+        <li><a href="index.html#gallery">Lookbook</a></li>
+      </ul>
+      <a class="bag-link" href="cart.html" aria-label="View cart">
+        <span>Bag</span>
+        <strong id="cart-count">0</strong>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="section-kicker">Studio Admin</p>
+        <h1>Orders, styled clearly for quick review.</h1>
+        <p>This demo reads local orders from the browser so you can test the full shopping flow without a backend.</p>
+      </div>
+    </section>
+
+    <section class="container orders-layout">
+      <div class="panel orders-list" id="orders-list"></div>
+      <aside class="panel summary" aria-label="Order dashboard">
+        <h2>Snapshot</h2>
+        <div class="summary-line">
+          <span>Orders</span>
+          <strong id="orders-count">0</strong>
+        </div>
+        <div class="summary-line">
+          <span>Revenue</span>
+          <strong id="orders-total">NGN 0</strong>
+        </div>
+        <a href="index.html#shop" class="btn btn-dark">Back to Shop</a>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const productImages = {
+      "Elegant Red Dress": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80",
+      "Tan Sneakers": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80",
+      "Leather Jacket": "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80",
+      "Floral Heels": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=400&q=80",
+      "Summer Dress": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=400&q=80",
+      "White Trainers": "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=400&q=80"
+    };
+
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const ordersList = document.getElementById("orders-list");
+    const formatMoney = (value) => "NGN " + Number(value).toLocaleString("en-NG");
+
+    document.getElementById("cart-count").textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById("orders-count").textContent = orders.length;
+    document.getElementById("orders-total").textContent = formatMoney(orders.reduce((sum, order) => sum + Number(order.total || 0), 0));
+
+    if (orders.length === 0) {
+      ordersList.innerHTML = '<div class="empty-state">No orders yet. Add a few pieces to the bag, check out, and they will appear here.</div>';
+    } else {
+      ordersList.innerHTML = orders.map((order) => `
+        <article class="order-card">
+          <div>
+            <h3>${order.id || "VogueAura Order"}</h3>
+            <div class="order-meta">
+              <span>${order.name}</span>
+              <span>${order.email}</span>
+              <span>${order.phone || "No phone"}</span>
+              <span>${formatMoney(order.total)}</span>
+              <span>${order.status || "paid"}</span>
+            </div>
+            <p>${order.address}</p>
+            <p>Reference: ${order.reference || "Demo order"} | ${new Date(order.date).toLocaleString()}</p>
+          </div>
+          <div>
+            ${order.cart.map((item) => `
+              <div class="order-item">
+                <img src="${productImages[item.name]}" alt="${item.name}">
+                <div>
+                  <strong>${item.name}</strong>
+                  <p>Qty ${item.quantity || 1} | ${formatMoney(item.price)}</p>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

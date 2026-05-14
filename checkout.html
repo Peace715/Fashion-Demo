@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | VogueAura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="payment-config.js"></script>
+</head>
+<body class="page-shell">
+  <nav class="navbar" aria-label="Primary navigation">
+    <div class="container nav-container">
+      <a class="logo" href="index.html">VogueAura</a>
+      <ul class="nav-links">
+        <li><a href="index.html#shop">Shop</a></li>
+        <li><a href="index.html#about">Atelier</a></li>
+        <li><a href="index.html#gallery">Lookbook</a></li>
+      </ul>
+      <a class="bag-link" href="cart.html" aria-label="View cart">
+        <span>Bag</span>
+        <strong id="cart-count">0</strong>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="section-kicker">Checkout</p>
+        <h1>Send your order to the studio.</h1>
+        <p>Complete your details and pay securely with Paystack. Paid orders are saved locally for the demo admin view.</p>
+      </div>
+    </section>
+
+    <section class="container checkout-layout">
+      <form class="panel checkout-form" id="checkout-form">
+        <label>
+          Full Name
+          <input type="text" name="name" autocomplete="name" required>
+        </label>
+        <label>
+          Email Address
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label>
+          Phone Number
+          <input type="tel" name="phone" autocomplete="tel" required>
+        </label>
+        <label>
+          Delivery Address
+          <textarea name="address" autocomplete="street-address" required></textarea>
+        </label>
+        <button type="submit" class="btn btn-dark" id="pay-button">Pay Now</button>
+      </form>
+
+      <aside class="panel summary" aria-label="Checkout summary">
+        <h2>Summary</h2>
+        <div class="summary-line">
+          <span>Items</span>
+          <strong id="item-total">0</strong>
+        </div>
+        <div class="summary-line">
+          <span>Total</span>
+          <strong id="cart-total">NGN 0</strong>
+        </div>
+        <p class="summary-note" id="checkout-note">Payment connects securely through Paystack.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartCount = document.getElementById("cart-count");
+    const itemTotal = document.getElementById("item-total");
+    const cartTotal = document.getElementById("cart-total");
+    const checkoutNote = document.getElementById("checkout-note");
+    const payButton = document.getElementById("pay-button");
+    const formatMoney = (value) => "NGN " + Number(value).toLocaleString("en-NG");
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const paymentConfig = window.VOGUEAURA_PAYMENT || {};
+    const paystackKey = (paymentConfig.paystackPublicKey || "").trim();
+    const currency = paymentConfig.currency || "NGN";
+    const isConnected = /^pk_(test|live)_/i.test(paystackKey);
+
+    cartCount.textContent = count;
+    itemTotal.textContent = count;
+    cartTotal.textContent = formatMoney(total);
+
+    if (!isConnected) {
+      checkoutNote.textContent = "Payment is not connected yet. Add your Paystack public key in payment-config.js.";
+      checkoutNote.classList.add("summary-note-warning");
+    }
+
+    const setPaymentState = (message, isBusy = false, isWarning = false) => {
+      checkoutNote.textContent = message;
+      checkoutNote.classList.toggle("summary-note-warning", isWarning);
+      payButton.disabled = isBusy;
+      payButton.textContent = isBusy ? "Connecting..." : "Pay Now";
+    };
+
+    document.getElementById("checkout-form").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      if (cart.length === 0) {
+        alert("Your bag is empty.");
+        return;
+      }
+
+      const name = this.name.value;
+      const email = this.email.value;
+      const phone = this.phone.value;
+      const address = this.address.value;
+      const reference = "VA-" + Date.now();
+      const order = {
+        id: "VA-" + Date.now().toString().slice(-6),
+        name,
+        email,
+        phone,
+        address,
+        cart,
+        total,
+        reference,
+        status: "paid",
+        date: new Date().toISOString()
+      };
+
+      const storeOrder = (reference) => {
+        const orders = JSON.parse(localStorage.getItem("orders")) || [];
+        orders.unshift({ ...order, reference });
+        localStorage.setItem("orders", JSON.stringify(orders));
+        localStorage.removeItem("cart");
+        window.location.href = "admin.html";
+      };
+
+      const loadPaystack = () => new Promise((resolve, reject) => {
+        if (window.Paystack) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://js.paystack.co/v2/inline.js";
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+
+      if (!isConnected) {
+        setPaymentState("Payment is not connected yet. Add your Paystack public key in payment-config.js.", false, true);
+        return;
+      }
+
+      try {
+        setPaymentState("Connecting to Paystack...", true);
+        await loadPaystack();
+
+        const popup = new Paystack();
+        popup.newTransaction({
+          key: paystackKey,
+          email,
+          firstname: name.split(" ")[0] || name,
+          lastname: name.split(" ").slice(1).join(" "),
+          phone,
+          amount: total * 100,
+          currency,
+          reference,
+          metadata: {
+            customer_name: name,
+            delivery_address: address,
+            items: cart.map((item) => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price
+            }))
+          },
+          onSuccess: (transaction) => storeOrder(transaction.reference || reference),
+          onCancel: () => setPaymentState("Payment cancelled. You can try again when ready.", false, true),
+          onError: () => setPaymentState("Could not connect to Paystack. Check your internet and try again.", false, true)
+        });
+      } catch (error) {
+        setPaymentState("Could not connect to Paystack. Check your internet and try again.", false, true);
+      }
+    });
+  </script>
+</body>
+</html>
