@@ -8,7 +8,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="payment-config.js"></script>
+  <script>
+    window.VOGUEAURA_PAYMENT = {
+  paystackPublicKey: "pk_test_c799bf15e9ea42a05c7fa4ed29a69e3f2acfafd7",
+  currency: "NGN"
+};
+  </script>
 </head>
 <body class="page-shell">
   <nav class="navbar" aria-label="Primary navigation">
@@ -137,18 +142,20 @@
       };
 
       const loadPaystack = () => new Promise((resolve, reject) => {
-        if (window.Paystack) {
-          resolve();
-          return;
-        }
+  if (window.PaystackPop) {
+    resolve();
+    return;
+  }
 
-        const script = document.createElement("script");
-        script.src = "https://js.paystack.co/v2/inline.js";
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
+  const script = document.createElement("script");
+  script.src = "https://js.paystack.co/v1/inline.js";
+  script.async = true;
+
+  script.onload = () => resolve();
+  script.onerror = () => reject();
+
+  document.body.appendChild(script);
+});
 
       if (!isConnected) {
         setPaymentState("Payment is not connected yet. Add your Paystack public key in payment-config.js.", false, true);
@@ -159,31 +166,47 @@
         setPaymentState("Connecting to Paystack...", true);
         await loadPaystack();
 
-        const popup = new Paystack();
-        popup.newTransaction({
-          key: paystackKey,
-          email,
-          firstname: name.split(" ")[0] || name,
-          lastname: name.split(" ").slice(1).join(" "),
-          phone,
-          amount: total * 100,
-          currency,
-          reference,
-          metadata: {
-            customer_name: name,
-            delivery_address: address,
-            items: cart.map((item) => ({
-              name: item.name,
-              quantity: item.quantity,
-              price: item.price
-            }))
-          },
-          onSuccess: (transaction) => storeOrder(transaction.reference || reference),
-          onCancel: () => setPaymentState("Payment cancelled. You can try again when ready.", false, true),
-          onError: () => setPaymentState("Could not connect to Paystack. Check your internet and try again.", false, true)
-        });
+        PaystackPop.setup({
+  key: paystackKey,
+  email,
+  firstname: name.split(" ")[0] || name,
+  lastname: name.split(" ").slice(1).join(" "),
+  phone,
+
+  amount: total * 100,
+  currency: currency,
+  ref: reference,
+
+  metadata: {
+    customer_name: name,
+    delivery_address: address,
+    items: cart.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    }))
+  },
+
+  callback: function(response) {
+    storeOrder(response.reference || reference);
+  },
+
+  onClose: function() {
+    setPaymentState(
+      "Payment cancelled. You can try again when ready.",
+      false,
+      true
+    );
+  }
+}).openIframe();
       } catch (error) {
-        setPaymentState("Could not connect to Paystack. Check your internet and try again.", false, true);
+        console.error(error);
+
+        setPaymentState(
+          "Could not connect to Paystack. Check your internet and try again.",
+          false,
+          true
+        );
       }
     });
   </script>
